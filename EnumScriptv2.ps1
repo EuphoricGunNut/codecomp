@@ -137,7 +137,7 @@ function Compare-OutPuts {
 	Write-Host "Scanning IP IOCs"    
 		grep-f $IPinputfile $IPsearchFile
 	write-host "Scanning File IOCs" 
-		#grep-f $Fileinputfile $FilesearchFile
+		grep-f $Fileinputfile $FilesearchFile
 	write-host "Scanning Registry IOCs"
 		grep-f $Reginputfile $RegsearchFile
 }
