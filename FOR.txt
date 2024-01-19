@@ -1,0 +1,66 @@
+Mounting an evidence drive in SIFT
+	sudo su
+	cd /cases
+	ls -la 
+	ewfmount sample.eo1 /mnt/ewf 
+	cd /mnt/ewf
+	mount -o ro,loop,show_sys_files,streams_interface=windows ewf1 /mnt/windows_mount
+
+Squid proxy server 
+	Relevant Files
+		/etc/squid/squid.conf
+		/var/log/squid/
+		/var/cache/squid or /var/spool/squid
+	Squid config file
+		most important part is access logs 
+		
+	Analysis tools 
+		calamaris - installed in SIFT for analyzing squid logs 
+		squidview 
+		
+	raw analysis
+		Squid uses raw text logs 
+		basic tools used
+			grep
+			awk
+			sed
+	
+	
+	convert squidtime to normal human readable time
+		awk '{$1=strftime ("%F $T", $1, 1); print $0}'
+	usage
+		sudo cat /var/log/squid/access.log | awk '{$1=strftime ("%F $T", $1, 1); print $0}'
+	
+	calamaris -a access.log #returns nothing, calamaris doesnt know this log format
+	custom grep expression to make logs easy to read
+	grep -av "\"CONNNECT" access.log | awk '{print $7}' | awk -F/ '{print $3}' | sort | uniq -c | sort -nr
+	
+		| sort | uniq -c | sort -nr # most common pipechain used 
+			#shell histogram
+			# sorts them into like groups
+			# counts how many instances of these happened
+			# sorts them again by most commonly used
+			# most frequently used at top, least used at the bottom
+			
+	going through google search activity
+		grep -a google.com access.log | grep -a complete | wc -l 
+		grep -a google.com access.log | grep -a complete | less 
+		
+	going through protonmail data
+		grep -a proton access.log 
+		protonmail does use the name of the email you're creating in the url strings
+		
+	finding data in pastebins
+		grep -a pastebin.com access.log
+			find pastebin or like sites and proceed to find exact URLs for extracted information, see if adversary neglected to clean up after data exfiltration
+			if you find pastebin.com, you're gonna have a bad day
+			everyone uses it
+			pastebin has auto-expire of pages
+			full self destruction
+			know what you're going into before you start your investigation
+	
+	
+	Proxy Cache extraction
+		cached items can be carved
+		Servers Cache-Control header Dictates cacheing
+		
